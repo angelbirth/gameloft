@@ -5,6 +5,7 @@
  */
 package mobileapplication1;
 
+import java.io.IOException;
 import java.util.Random;
 import javax.microedition.lcdui.*;
 
@@ -21,13 +22,14 @@ public class MyCanvas extends Canvas implements Runnable {
     private boolean s_stateExitCurrent = false;
     private Graphics _g;
     private int _counter;
+    private Image mLogo;
 
     /**
      * constructor
      */
     private MyCanvas() {
         super();
-        stateSwitch(Constants.STATE_GAMEPLAY);
+        stateSwitch(Constants.STATE_LOGO);
     }
 
     public static MyCanvas getInstance() {
@@ -78,7 +80,7 @@ public class MyCanvas extends Canvas implements Runnable {
 
             endTime = System.currentTimeMillis();
             long delta = (1000 / FPS) - (endTime - startTime);
-            System.out.println(delta);
+            //System.out.println(delta);
             if (delta < 10) {
                 delta = 10;
             }
@@ -101,7 +103,7 @@ public class MyCanvas extends Canvas implements Runnable {
     public void StateMachine_sendMessage(int msg) {
         switch (_state) {
             case Constants.STATE_LOGO:
-
+                updateLogo(msg);
                 break;
             case Constants.STATE_GAMEPLAY:
                 updateGameplay(msg);
@@ -134,6 +136,35 @@ public class MyCanvas extends Canvas implements Runnable {
     }
 
     private void updateLogo(int message) {
+        switch (message) {
+            case Constants.MESSAGE_PAINT: {
+                paintLogo(_g);
+            }
+            break;
+            case Constants.MESSAGE_UPDATE:
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                stateSwitch(Constants.STATE_GAMEPLAY);
+                break;
+            case Constants.MESSAGE_INIT:
+            case Constants.MESSAGE_DESTROY:
+                break;
+        }
+    }
+
+    private void paintLogo(Graphics g) {
+        g.drawImage(mLogo, 0, 0, 0);
+    }
+
+    void loadResource() {
+        try {
+            mLogo = Image.createImage("/hotot.PNG");
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
 
     }
 

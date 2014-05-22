@@ -5,9 +5,9 @@
  */
 package mobileapplication1;
 
-import java.io.IOException;
-import java.util.Random;
 import javax.microedition.lcdui.*;
+import javax.microedition.lcdui.game.Sprite;
+import resourceManagement.ResourceManager;
 
 /**
  * @author ric
@@ -22,13 +22,17 @@ public class MyCanvas extends Canvas implements Runnable {
     private boolean s_stateExitCurrent = false;
     private Graphics _g;
     private int _counter;
-    private Image mLogo;
+    private Image mLogo, background;
+    private ResourceManager _rm;
+    
+    private Sprite _sprite;
 
     /**
      * constructor
      */
     private MyCanvas() {
         super();
+        loadResource();
         stateSwitch(Constants.STATE_LOGO);
     }
 
@@ -49,8 +53,9 @@ public class MyCanvas extends Canvas implements Runnable {
     }
 
     private void draw(Graphics g) {
-        g.setColor(0);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        g.drawImage(background, 0, 0, 0);
+//        g.setColor(0);
+//        g.fillRect(0, 0, getWidth(), getHeight());
         g.setColor(0x00ff00ff);
         g.fillRect(x, y, 40, 40);
     }
@@ -92,7 +97,7 @@ public class MyCanvas extends Canvas implements Runnable {
         }
     }
 
-    protected void stateSwitch(int nextState) {
+    protected final void stateSwitch(int nextState) {
         if (nextState == -1) {
             return;
         }
@@ -130,6 +135,7 @@ public class MyCanvas extends Canvas implements Runnable {
             case Constants.MESSAGE_INIT:
                 x = y = 100;
                 dx = dy = 6;
+
             default:
                 break;
         }
@@ -160,12 +166,14 @@ public class MyCanvas extends Canvas implements Runnable {
     }
 
     void loadResource() {
+        _rm = ResourceManager.getInstance();
         try {
-            mLogo = Image.createImage("/hotot.PNG");
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            _rm.Load("/RM.txt");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
+        mLogo = _rm.getImage(0);
+        background = _rm.getImage(1);
     }
 
     private static final class CanvasHolder {

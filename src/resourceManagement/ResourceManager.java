@@ -4,6 +4,7 @@
  */
 package resourceManagement;
 
+import java.io.IOException;
 import java.io.InputStream;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
@@ -14,7 +15,7 @@ public class ResourceManager {
      * variable
      */
 
-    public static ResourceManager instance = null;
+    private static ResourceManager instance = null;
     public static Image[] m_imageArr = null;
     public static Sprite[] m_spriteArr = null;
     public static Object[] m_objectArr = null;
@@ -22,7 +23,7 @@ public class ResourceManager {
     /*
      * constructor
      */
-    public ResourceManager() {
+    private ResourceManager() {
     }
 
     /*
@@ -43,8 +44,9 @@ public class ResourceManager {
      * @param filePath - path of file text use to load
      */
 
-    public void Load(String filePath) throws Exception {
-        System.out.println("begin load resourcer");
+    public void Load(String filePath) throws IOException {
+        System.err.println("begin load resourcer");
+        
         InputStream inputStream = getClass().getResourceAsStream(filePath);
         Scanner scanner = new Scanner(inputStream);
         String head = "";
@@ -67,7 +69,7 @@ public class ResourceManager {
                     try {
                         m_imageArr[i] = Image.createImage(scanner.getNext());
                         System.out.println("create image " + i);
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                     }
                 }
 
@@ -105,7 +107,7 @@ public class ResourceManager {
                                 Integer.parseInt(frame[0]),
                                 Integer.parseInt(frame[1]));
                         System.out.println("create image" + name);
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         System.out.println("error create sprite " + name);
                     }
 
@@ -121,7 +123,7 @@ public class ResourceManager {
         } while (scanner.hasNext());
     }
 
-    public Image getImages(int index) {
+    public Image getImage(int index) {
         return m_imageArr[index];
     }
 }
